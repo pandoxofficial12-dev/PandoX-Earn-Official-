@@ -3,48 +3,297 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PandoX - Earn PDX</title>
+  <title>PandoX</title>
   <script src="https://cdn.jsdelivr.net/npm/@worldcoin/minikit-js@latest/dist/index.global.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(to bottom, #000022, #000000);
-      color: white;
-      padding: 20px;
-      margin: 0;
-      min-height: 100vh;
+    :root {
+      --neon-blue: #00f0ff;
+      --gold-premium: #ffd700;
+      --gold-dark: #d4af37;
+      --bg-dark: #000022;
+      --card-bg: rgba(5, 5, 40, 0.92);
+      --text-light: #f0faff;
     }
-    h1 { color: #00ffff; text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff; font-size: 3em; margin: 10px 0; letter-spacing: 2px; }
-    .logo { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #00ffff; box-shadow: 0 0 25px #00ffff, inset 0 0 10px #00ffff; margin: 30px auto; display: block; }
-    .section { margin: 40px 0; }
-    .buttons { display: flex; flex-wrap: wrap; justify-content: center; }
-    .social-btn { background: #00ffff; color: black; border: none; padding: 15px 30px; margin: 10px; border-radius: 50px; font-size: 18px; cursor: pointer; box-shadow: 0 0 15px #00ffff; text-decoration: none; display: inline-block; font-weight: bold; }
-    .earn-btn { background: linear-gradient(#00ffff, #00bfff); color: black; border: none; padding: 18px 50px; font-size: 22px; margin: 20px 10px; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px #00ffff; font-weight: bold; text-transform: uppercase; }
-    .earn-btn:disabled { background: #333; box-shadow: none; color: #666; }
-    #status { margin-top: 40px; font-size: 20px; color: #00ffff; text-shadow: 0 0 10px #00ffff; }
-    .subtitle { font-size: 1.4em; margin: 15px 0; color: #80ffff; }
-    #ranking { margin-top: 30px; font-size: 18px; }
-    #nextClaim { font-size: 16px; color: #ffcc00; margin: 10px 0; }
-    #referralSection { margin: 20px 0; }
-    #referralInput { padding: 12px; width: 250px; border-radius: 30px; border: 2px solid #00ffff; background: #111133; color: white; font-size: 16px; text-align: center; }
-    #disconnectBtn { background: #ff4444; color: white; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #000055 100%);
+      color: var(--text-light);
+      min-height: 100vh;
+      padding: 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=2000&q=80') center/cover;
+      opacity: 0.16;
+      z-index: -2;
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat 60s infinite linear;
+      box-shadow: 0 0 30px;
+    }
+
+    .particle.gold { background: var(--gold-premium); box-shadow: 0 0 30px var(--gold-premium); }
+    .particle.neon { background: var(--neon-blue); box-shadow: 0 0 30px var(--neon-blue); }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(180vh) scale(0.05) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) scale(0.4) rotate(2160deg); opacity: 0; }
+    }
+
+    .logo-container {
+      text-align: center;
+      margin: 30px 0 50px;
+    }
+
+    .logo {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 14px double var(--gold-premium);
+      box-shadow: 0 0 120px var(--gold-premium), inset 0 0 60px var(--neon-blue);
+      animation: logoPulse 6s infinite alternate;
+    }
+
+    @keyframes logoPulse {
+      from { transform: scale(1); box-shadow: 0 0 120px var(--gold-premium); }
+      to { transform: scale(1.04); box-shadow: 0 0 160px var(--neon-blue); }
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 3.8em;
+      background: linear-gradient(90deg, var(--gold-premium), var(--neon-blue), var(--gold-premium));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+      margin: 20px 0 30px;
+      letter-spacing: 6px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 1.5em;
+      color: var(--text-light);
+      margin-bottom: 50px;
+      text-align: center;
+      opacity: 0.95;
+    }
+
+    .section {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px 25px;
+      margin: 40px 0;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      box-shadow: 0 30px 80px rgba(0, 255, 255, 0.3);
+      transition: all 0.6s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 50px 120px rgba(255, 215, 0, 0.5);
+    }
+
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5em;
+      color: var(--neon-blue);
+      text-shadow: 0 0 30px var(--neon-blue);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .social-btn, .earn-btn, #copyReferralBtn, #shareXBtn {
+      background: linear-gradient(135deg, var(--gold-premium), var(--gold-dark));
+      color: #000;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-btn::after, .earn-btn::after, #copyReferralBtn::after, #shareXBtn::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.8s ease, height 0.8s ease;
+    }
+
+    .social-btn:active::after, .earn-btn:active::after, #copyReferralBtn:active::after, #shareXBtn:active::after {
+      width: 400px; height: 400px;
+    }
+
+    .social-btn:hover, .earn-btn:hover, #copyReferralBtn:hover, #shareXBtn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(0, 255, 255, 0.7);
+    }
+
+    .earn-btn {
+      background: linear-gradient(135deg, var(--neon-blue), var(--gold-premium));
+      padding: 20px 80px;
+      font-size: 1.4em;
+    }
+
+    .earn-btn:disabled {
+      background: #444;
+      box-shadow: none;
+      color: #888;
+    }
+
+    #status {
+      margin: 40px 0;
+      font-size: 1.6em;
+      color: var(--gold-premium);
+      text-shadow: 0 0 30px var(--gold-premium);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    #nextClaim {
+      font-size: 1.5em;
+      color: var(--gold-premium);
+      margin: 30px 0;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #referralSection {
+      margin: 40px 0;
+      text-align: center;
+    }
+
+    #referralInput {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      border-radius: 50px;
+      border: 2px solid var(--gold-premium);
+      background: rgba(5, 5, 40, 0.98);
+      color: white;
+      font-size: 1.3em;
+      text-align: center;
+      box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    #copyReferralBtn, #shareXBtn {
+      margin: 15px 10px;
+      background: var(--gold-premium);
+      color: #000;
+      padding: 18px 70px;
+      border-radius: 50px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 40px rgba(255, 215, 0, 0.7);
+    }
+
+    #disconnectBtn {
+      background: linear-gradient(#ff4444, #cc0000);
+      color: white;
+    }
+
+    #ranking {
+      display: grid;
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .rank-card {
+      background: rgba(0, 0, 0, 0.95);
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.6);
+      box-shadow: 0 15px 60px rgba(0, 255, 255, 0.4);
+      transition: all 0.6s ease;
+      animation: fadeInUp 1.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .rank-card:nth-child(1) { animation-delay: 0.4s; }
+    .rank-card:nth-child(2) { animation-delay: 0.8s; }
+    .rank-card:nth-child(3) { animation-delay: 1.2s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .rank-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 40px 120px rgba(255, 215, 0, 0.7);
+    }
+
+    .rank-position {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: var(--gold-premium);
+      margin-bottom: 15px;
+    }
+
+    .medal { font-size: 2em; margin-left: 15px; }
   </style>
 </head>
 <body>
 
-  <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX Logo" class="logo">
+  <div class="particles" id="particles"></div>
+  <canvas id="confetti"></canvas>
 
-  <h1>¡Earn PandoX (PDX)!</h1>
-  <p class="subtitle">Conecta wallet, reclama cada 6h e invita amigos para bonus.</p>
+  <div class="logo-container">
+    <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX Logo" class="logo">
+  </div>
+
+  <h1>PandoX</h1>
+  <p class="subtitle">Conecta tu wallet • Reclama cada 6 horas • Invita y domina</p>
 
   <div class="section">
-    <h2>Únete a la comunidad</h2>
+    <h2>Comunidad PandoX</h2>
     <div class="buttons">
       <a href="https://x.com/pandoxofficial" target="_blank" class="social-btn">X Oficial</a>
-      <a href="https://t.me/pandoxofficialcrypto" target="_blank" class="social-btn">Telegram Grupo</a>
-      <a href="https://t.me/pandoxofficialcrypto" target="_blank" class="social-btn">Canal Telegram</a>
+      <a href="https://t.me/pandoxofficial" target="_blank" class="social-btn">Telegram Grupo</a>
+      <a href="https://t.me/pandoxchannel" target="_blank" class="social-btn">Canal Telegram</a>
       <a href="https://worldscan.org/address/0xF968341A687D70BcF84121111CfBB5eF7148AC28" target="_blank" class="social-btn">Contrato PDX</a>
     </div>
   </div>
@@ -52,233 +301,97 @@
   <div class="section">
     <h2>Gana PDX</h2>
     <div id="referralSection">
-      <p>Ingresa wallet de referido (opcional - gana bonus ambos)</p>
+      <p>Ingresa wallet de referido (opcional - bonus mutuo)</p>
       <input type="text" id="referralInput" placeholder="0x...">
+      <button id="copyReferralBtn" style="display:none;">Copiar mi código</button>
+      <button id="shareXBtn" style="display:none;">Compartir en X</button>
     </div>
-    <button id="subscribeBtn" class="earn-btn">Conectar Wallet / Registrarse</button>
-    <button id="claimBtn" class="earn-btn" disabled>Claim Reward (cada 6h)</button>
+    <button id="subscribeBtn" class="earn-btn">Conectar Wallet</button>
+    <button id="claimBtn" class="earn-btn" disabled>Reclamar PDX</button>
     <button id="viewBalanceBtn" class="earn-btn" disabled>Ver Saldo / Posición</button>
-    <button id="disconnectBtn" class="earn-btn" style="display:none; background:#ff4444;">Desconectar Wallet</button>
-    <div id="status">Abre en World App para conectar y ganar.</div>
+    <button id="disconnectBtn" class="earn-btn" style="display:none;">Desconectar Wallet</button>
+    <div id="status">Abre en World App para empezar</div>
     <div id="nextClaim"></div>
-    <div id="ranking"><b>Top 10 (puntos totales):</b><br>Cargando...</div>
+    <div id="ranking"><b>Ranking Top 10</b><br>Cargando...</div>
   </div>
 
 <script>
-  const supabaseUrl = 'https://jboiwiedvugsfbxzgkzd.supabase.co';
-  const supabaseKey = 'sb_publishable_8FrWUMtLwxEcgvDl-sx9CA_xpSpY2-M';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// Partículas doradas y neón
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 100; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    if (i % 3 === 0) particle.classList.add('neon');
+    const size = Math.random() * 6 + 2;
+    particle.style.width = particle.style.height = size + 'px';
+    particle.style.left = Math.random() * 100 + 'vw';
+    particle.style.animationDelay = Math.random() * 30 + 's';
+    particle.style.animationDuration = Math.random() * 50 + 50 + 's';
+    container.appendChild(particle);
+  }
+}
+createParticles();
 
-  const subscribeBtn = document.getElementById('subscribeBtn');
-  const claimBtn = document.getElementById('claimBtn');
-  const viewBalanceBtn = document.getElementById('viewBalanceBtn');
-  const disconnectBtn = document.getElementById('disconnectBtn');
-  const referralInput = document.getElementById('referralInput');
-  const status = document.getElementById('status');
-  const nextClaimDiv = document.getElementById('nextClaim');
-  const rankingDiv = document.getElementById('ranking');
+// Confeti al reclamar
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-  let walletAddress = null;
-  let lastClaim = 0;
-  const claimInterval = 6 * 60 * 60 * 1000; // 6 horas
-  const welcomeReward = 5;
-  const recurringReward = 2;
-  const referralBonusInviter = 5;
-  const referralBonusNew = 2;
-  let userPoints = 0;
-  let claimTimer = null;
-
-  if (typeof MiniKit !== 'undefined' && MiniKit.isInstalled()) {
-    status.textContent = '¡MiniKit listo! Ingresa wallet de referido (opcional) y conecta.';
-  } else {
-    status.textContent = 'Abre desde World App para funciones reales.';
+  const particles = [];
+  for (let i = 0; i < 300; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 12 + 6,
+      speed: Math.random() * 8 + 4,
+      rotation: Math.random() * 2160,
+      color: ['#FFD700', '#FFEA00', '#00f0ff', '#FFFFFF', '#FFFF99'][Math.floor(Math.random() * 5)]
+    });
   }
 
-  async function updateRanking() {
-    try {
-      const { data } = await supabase
-        .from('claims')
-        .select('wallet, points')
-        .order('points', { ascending: false })
-        .limit(10);
-      rankingDiv.innerHTML = '<b>Top 10 (claims + referidos):</b><br>' + 
-        (data && data.length > 0 ? data.map((u, i) => `${i+1}. \( {u.wallet.slice(0,6)}... \){u.wallet.slice(-4)} - ${u.points || 0} pts`).join('<br>') : 'No hay usuarios aún');
-    } catch (err) {
-      rankingDiv.innerHTML = 'Error al cargar ranking';
-      console.error(err);
-    }
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.9;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+
+      p.y += p.speed;
+      p.rotation += 8;
+      if (p.y > canvas.height) p.y = -p.size * 2;
+    });
+    requestAnimationFrame(animate);
   }
+  animate();
 
-  function updateNextClaim() {
-    const now = Date.now();
-    if (lastClaim === 0) {
-      nextClaimDiv.textContent = '¡Puedes reclamar ahora!';
-      return;
-    }
-    const remainMs = claimInterval - (now - lastClaim);
-    if (remainMs <= 0) {
-      nextClaimDiv.textContent = '¡Puedes reclamar ahora!';
-      clearInterval(claimTimer);
-    } else {
-      const minutes = Math.floor(remainMs / 60000);
-      const seconds = Math.floor((remainMs % 60000) / 1000);
-      nextClaimDiv.textContent = `Próximo claim en ${minutes}m ${seconds}s`;
-    }
-  }
+  setTimeout(() => { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); }, 8000);
+}
 
-  async function checkOrCreateUser(referrer = null) {
-    try {
-      let { data, error } = await supabase
-        .from('claims')
-        .select('*')
-        .eq('wallet', walletAddress)
-        .single();
+// Copiar y compartir
+document.getElementById('copyReferralBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(walletAddress || 'Conecta primero');
+  alert('¡Código copiado!');
+});
 
-      if (error && error.code !== 'PGRST116') throw error;
+document.getElementById('shareXBtn').addEventListener('click', () => {
+  const text = `¡Únete a PandoX y gana PDX cada 6 horas! Mi código: ${walletAddress} 🐼🚀 https://pandoxofficial12-dev.github.io/PandoX-Earn-Official-/`;
+  window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+});
 
-      let bonus = 0;
-      let message = `¡Bienvenido! Recibiste ${welcomeReward} pts.`;
-      if (!data) {
-        if (referrer && referrer !== walletAddress) {
-          const { data: refData } = await supabase.from('claims').select('wallet').eq('wallet', referrer).single();
-          if (refData) {
-            bonus += referralBonusNew;
-            message += ` +${referralBonusNew} por referido.`;
-            await supabase.from('claims')
-              .update({ 
-                points: supabase.raw('COALESCE(points, 0) + ?', [referralBonusInviter]),
-                referrals_count: supabase.raw('COALESCE(referrals_count, 0) + 1')
-              })
-              .eq('wallet', referrer);
-          }
-        }
-        await supabase.from('claims').insert([
-          { 
-            wallet: walletAddress, 
-            last_claim: null, 
-            welcome_claimed: true, 
-            referrer: referrer || null, 
-            points: welcomeReward + bonus,
-            referrals_count: 0
-          }
-        ]);
-        userPoints = welcomeReward + bonus;
-        lastClaim = 0;
-        alert(message);
-      } else {
-        lastClaim = new Date(data.last_claim || 0).getTime();
-        userPoints = data.points || 0;
-        if (!data.welcome_claimed) {
-          await supabase.from('claims').update({ 
-            welcome_claimed: true, 
-            points: supabase.raw('COALESCE(points, 0) + ?', [welcomeReward]) 
-          }).eq('wallet', walletAddress);
-          userPoints += welcomeReward;
-          alert(`¡Welcome bonus! +${welcomeReward} pts.`);
-        }
-      }
+// Resto del script funcional (pega aquí tu código completo de conexión, claim, ranking, etc.)
+const supabaseUrl = 'https://jboiwiedvugsfbxzgkzd.supabase.co';
+const supabaseKey = 'sb_publishable_8FrWUMtLwxEcgvDl-sx9CA_xpSpY2-M';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-      claimBtn.disabled = false;
-      viewBalanceBtn.disabled = false;
-      disconnectBtn.style.display = 'inline-block';
-      updateNextClaim();
-      claimTimer = setInterval(updateNextClaim, 1000);
-      updateRanking();
-    } catch (err) {
-      status.textContent = 'Error al registrar: ' + (err.message || 'Intenta de nuevo');
-      console.error(err);
-    }
-  }
-
-  subscribeBtn.onclick = async () => {
-    if (!MiniKit || !MiniKit.isInstalled()) {
-      status.textContent = 'Abre en World App.';
-      return;
-    }
-    subscribeBtn.disabled = true;
-    subscribeBtn.textContent = 'Conectando...';
-    try {
-      const result = await MiniKit.commandsAsync.walletAuth({});
-      if (result.finalPayload.status === 'success') {
-        walletAddress = MiniKit.walletAddress;
-        status.textContent = `¡Conectado! \( {walletAddress.slice(0,6)}... \){walletAddress.slice(-4)}`;
-        subscribeBtn.textContent = '¡Conectado!';
-        const referrer = referralInput.value.trim();
-        await checkOrCreateUser(referrer || null);
-      } else {
-        status.textContent = 'Conexión cancelada.';
-      }
-    } catch (err) {
-      status.textContent = 'Error al conectar: ' + (err.message || 'Intenta de nuevo');
-    } finally {
-      subscribeBtn.disabled = false;
-    }
-  };
-
-  claimBtn.onclick = async () => {
-    if (!walletAddress) { status.textContent = 'Primero conecta tu wallet.'; return; }
-    const now = Date.now();
-    if (now - lastClaim < claimInterval) {
-      const remain = Math.ceil((claimInterval - (now - lastClaim)) / 60000);
-      alert(`Espera ${remain} minutos para reclamar.`);
-      return;
-    }
-    claimBtn.disabled = true;
-    claimBtn.textContent = 'Reclamando...';
-    try {
-      const payload = {
-        reference: 'pandoX-earn-' + Date.now(),
-        tokens: [{ address: '0xF968341A687D70BcF84121111CfBB5eF7148AC28', amount: '2000000000000000000' }],
-        to: walletAddress,
-        description: 'Recompensa Earn PandoX'
-      };
-      const response = await MiniKit.commandsAsync.pay(payload);
-      if (response.finalPayload.status === 'success') {
-        lastClaim = now;
-        userPoints += recurringReward;
-        await supabase.from('claims').update({
-          last_claim: new Date().toISOString(),
-          points: userPoints
-        }).eq('wallet', walletAddress);
-        alert(`¡Éxito! ${recurringReward} PDX enviados. Puntos: ${userPoints}`);
-        updateRanking();
-        updateNextClaim();
-      } else {
-        status.textContent = 'Transacción cancelada.';
-      }
-    } catch (err) {
-      status.textContent = 'Error en claim: ' + (err.message || 'Verifica saldo');
-    } finally {
-      claimBtn.disabled = false;
-      claimBtn.textContent = 'Claim Reward';
-    }
-  };
-
-  viewBalanceBtn.onclick = async () => {
-    try {
-      const { data } = await supabase.from('claims').select('points').eq('wallet', walletAddress).single();
-      status.textContent = `Puntos: ${data ? data.points : 0} (ver PUF Wallet para PDX real)`;
-    } catch (err) {
-      status.textContent = 'Error al ver saldo.';
-    }
-  };
-
-  disconnectBtn.onclick = () => {
-    walletAddress = null;
-    lastClaim = 0;
-    userPoints = 0;
-    claimBtn.disabled = true;
-    viewBalanceBtn.disabled = true;
-    disconnectBtn.style.display = 'none';
-    subscribeBtn.textContent = 'Conectar Wallet / Registrarse';
-    subscribeBtn.disabled = false;
-    status.textContent = 'Wallet desconectada.';
-    nextClaimDiv.textContent = '';
-    clearInterval(claimTimer);
-  };
-
-  // Inicializar
-  updateRanking();
+// ... (tu código completo de variables, funciones, onclicks, etc.)
+// Cuando reclames con éxito: launchConfetti();
 </script>
 </body>
 </html>
