@@ -198,8 +198,8 @@
     <h2>Comunidad PandoX</h2>
     <div class="buttons">
       <a href="https://x.com/pandoxofficial" target="_blank" class="social-btn">X Oficial</a>
-      <a href="https://t.me/pandoxofficialcrypto" target="_blank" class="social-btn">Canal Telegram</a>
-      <a href="https://worldscan.org/address/0xF968341A687D70BcF84121111CfBB5eF7148AC28" target="_blank" class="social-btn">Contrato PDX</a>
+      <a href="https://t.me/pandoxchannel" target="_blank" class="social-btn">Canal Telegram</a>
+      <a href="https://optimistic.etherscan.io/address/0xF968341A687D70BcF84121111CfBB5eF7148AC28" target="_blank" class="social-btn">Contrato PDX</a>
     </div>
   </div>
 
@@ -217,16 +217,29 @@
     <button id="disconnectBtn" class="earn-btn" style="display:none;">Desconectar Wallet</button>
     <div id="status">Abre en World App para empezar</div>
     <div id="nextClaim"></div>
+
+    <!-- Banner de próximos repartos con hora UTC-5 -->
+    <p style="font-size: 14px; color: #ffd700; margin: 15px 0; text-align: center; line-height: 1.5; font-weight: bold; border: 1px solid #ffd700; border-radius: 10px; padding: 12px; background: rgba(255,215,0,0.1);">
+      🎉 <strong>Todos los domingos se reparten premios a los top 3</strong><br>
+      (Ranking Puntos PDX + Ranking Panda Runner pagado)<br>
+      <strong>A las 8:00 PM (hora UTC-5)</strong><br>
+      <strong>Requisito obligatorio:</strong> mínimo 50 reclamos / entradas pagadas en la semana<br>
+      Próximo reparto: <span style="color: #ffcc00;">Domingo</span> a las 8:00 PM UTC-5
+    </p>
+
     <div id="ranking"><b>Ranking Top 10</b><br>Cargando...</div>
+    <p id="totalClaims" style="font-size: 14px; color: #aaa; margin: 10px 0; text-align: center;">
+      Reclamos totales: Cargando...
+    </p>
   </div>
 
-  <!-- Panda Runner con transparencia y reglas de premios -->
+  <!-- Panda Runner -->
   <div class="section" id="gameSection" style="display:none;">
     <h2>Panda Runner - ¡Corre y gana!</h2>
     <p style="font-size: 0.95em; color: var(--text-light); opacity: 0.85; margin-bottom: 15px;">
       Los 0.5 WLD por competir van directamente a la wallet del creador para financiar airdrops, pool y recompensas semanales. 
       <strong>Premios semanales:</strong> 1er lugar 1.000.000 pandas • 2do lugar 500.000 pandas • 3er lugar 250.000 pandas.<br>
-      <strong>Importante:</strong> Los premios solo se otorgan si hay al menos 50 entradas pagadas en la semana (para garantizar un pool justo y evitar que alguien gane con 1 o 2 recargas).
+      <strong>Importante:</strong> Los premios solo se otorgan si hay al menos 50 entradas pagadas en la semana (para garantizar un pool justo y evitar que alguien gane con solo 1 o 2 recargas).
     </p>
     <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
       <button id="playPractice" class="earn-btn">Practicar (gratis)</button>
@@ -316,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shareBtn = document.getElementById('shareXBtn');
   if (shareBtn) shareBtn.addEventListener('click', () => {
-    const text = `¡Únete a PandoX y gana PDX cada 6 horas! Mi código: ${walletAddress} 🐼🚀 https://pandoxofficial12-dev.github.io/PandoX-Coin/`;
+    const text = `¡Únete a PandoX y gana PDX cada 6 horas! Mi código: ${walletAddress} 🐼🚀 https://pandoxofficial12-dev.github.io/PandoX-Earn-Official-/`;
     window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
   });
 });
@@ -363,6 +376,7 @@ document.getElementById('subscribeBtn').addEventListener('click', async () => {
       document.getElementById('gameSection').style.display = 'block';
 
       updateRanking();
+      updateTotalClaims();
       alert('¡Wallet conectada con éxito!');
     } else {
       alert('Conexión cancelada');
@@ -409,6 +423,7 @@ document.getElementById('claimBtn').addEventListener('click', async () => {
   launchConfetti();
   alert(`¡Reclamado +100 PDX! Total: ${newPoints} points`);
   updateRanking();
+  updateTotalClaims();
   document.getElementById('nextClaim').textContent = 'Próximo reclamo en 6 horas';
 });
 
@@ -441,8 +456,23 @@ async function updateRanking() {
   document.getElementById('ranking').innerHTML = html || 'Aún no hay participantes';
 }
 
-// Llamar ranking al cargar
+// Contador de reclamos totales
+async function updateTotalClaims() {
+  const { data } = await supabase
+    .from('claims')
+    .select('total_claims');
+
+  let total = 0;
+  data.forEach(row => {
+    total += row.total_claims || 0;
+  });
+
+  document.getElementById('totalClaims').textContent = `Reclamos totales: ${total}`;
+}
+
+// Llamar funciones al cargar
 updateRanking();
+updateTotalClaims();
 
 // Panda Runner
 const gameCanvas = document.getElementById('gameCanvas');
@@ -576,9 +606,6 @@ if (gameCanvas) {
   document.getElementById('playPractice').addEventListener('click', () => startGame(false));
   document.getElementById('playPaid').addEventListener('click', () => startGame(true));
 });
-
-// Llamar ranking al cargar
-updateRanking();
 </script>
 </body>
 </html>
