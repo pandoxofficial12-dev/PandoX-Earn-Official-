@@ -24,7 +24,7 @@
       padding: 15px;
     }
 
-    /* Splash rápido y seguro */
+    /* Splash rápido */
     #splash {
       position: fixed;
       inset: 0;
@@ -72,7 +72,15 @@
       display: block;
     }
 
-    #gameCanvas { width:100%; height:300px; background:#000033; border-radius:20px; margin-top:20px; border:2px solid #ffd700; }
+    #gameCanvas { 
+      width: 100%; 
+      height: 300px; 
+      background: #000033; 
+      border-radius: 20px; 
+      margin-top: 20px; 
+      border: 2px solid #ffd700; 
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -99,11 +107,11 @@
     <button id="viewBalanceBtn" class="earn-btn" disabled>Ver Saldo / Posición</button>
   </div>
 
-  <!-- Banner premios actualizados -->
+  <!-- Banner premios -->
   <div class="section" style="border:2px solid #ffd700;background:rgba(255,215,0,0.08);text-align:center;">
     <p style="font-size:15px;color:#ffd700;line-height:1.6;">
       🎉 <strong>Todos los domingos 8:00 PM (UTC-5)</strong><br><br>
-      <strong>Ranking Puntos PDX</strong> (reclamos + referidos):<br>
+      <strong>Ranking Puntos PDX</strong>:<br>
       1er: 80.000 PDX • 2do: 40.000 PDX • 3er: 25.000 PDX<br><br>
       <strong>Ranking Panda Runner</strong> (solo pagados):<br>
       1er: 400.000 PDX • 2do: 200.000 PDX • 3er: 80.000 PDX<br><br>
@@ -111,7 +119,7 @@
     </p>
   </div>
 
-  <!-- Panda Runner completo y funcional -->
+  <!-- Panda Runner -->
   <div class="section">
     <h2 style="text-align:center;color:#ffd700;">Panda Runner</h2>
     <div style="display:flex;justify-content:center;gap:15px;margin:20px 0;">
@@ -149,11 +157,17 @@ document.getElementById('claimBtn').addEventListener('click', () => {
   alert('¡Reclamado +100 PDX!');
 });
 
-// === PANDA RUNNER COMPLETO Y FUNCIONAL ===
+// === PANDA RUNNER COMPLETO Y CORREGIDO ===
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = canvas.offsetWidth || 360;
-canvas.height = 300;
+
+// Asegurar tamaño correcto del canvas
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 300;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
 let player = { x: 80, y: 200, w: 70, h: 70, vy: 0, gravity: 0.65, jump: -15, jumping: false };
 let obstacles = [], coins = [], score = 0, running = false;
@@ -179,6 +193,7 @@ function runGame() {
   player.vy = 0;
   obstacles = [];
   coins = [];
+  document.getElementById('gameScore').textContent = 'Score: 0';
   animateGame();
 }
 
@@ -187,7 +202,7 @@ function animateGame() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Dibujar panda
+  // Panda
   if (pandaImg.complete) {
     ctx.drawImage(pandaImg, player.x, player.y, player.w, player.h);
   } else {
@@ -199,34 +214,43 @@ function animateGame() {
   ctx.fillStyle = '#111133';
   ctx.fillRect(0, 250, canvas.width, 50);
 
-  // Obstáculos simples
-  if (Math.random() < 0.02) {
+  // Generar obstáculos
+  if (Math.random() < 0.025) {
     obstacles.push({ x: canvas.width, y: 200, w: 40, h: 50 });
   }
-  obstacles.forEach((obs, i) => {
+
+  // Dibujar y mover obstáculos
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    let obs = obstacles[i];
     obs.x -= 6;
     ctx.fillStyle = '#ff4444';
     ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
 
+    // Colisión
     if (obs.x < player.x + player.w && obs.x + obs.w > player.x &&
         obs.y < player.y + player.h && obs.y + obs.h > player.y) {
       gameOver();
+      return;
     }
 
     if (obs.x + obs.w < 0) obstacles.splice(i, 1);
-  });
-
-  // Monedas
-  if (Math.random() < 0.03) {
-    coins.push({ x: canvas.width, y: 120 + Math.random()*80, w: 30, h: 30 });
   }
-  coins.forEach((coin, i) => {
+
+  // Generar monedas
+  if (Math.random() < 0.03) {
+    coins.push({ x: canvas.width, y: 100 + Math.random() * 100, w: 30, h: 30 });
+  }
+
+  // Dibujar y mover monedas
+  for (let i = coins.length - 1; i >= 0; i--) {
+    let coin = coins[i];
     coin.x -= 6;
     ctx.fillStyle = '#ffd700';
     ctx.beginPath();
-    ctx.arc(coin.x + 15, coin.y + 15, 15, 0, Math.PI*2);
+    ctx.arc(coin.x + 15, coin.y + 15, 15, 0, Math.PI * 2);
     ctx.fill();
 
+    // Colisión con moneda
     if (coin.x < player.x + player.w && coin.x + coin.w > player.x &&
         coin.y < player.y + player.h && coin.y + coin.h > player.y) {
       score += 50;
@@ -234,7 +258,7 @@ function animateGame() {
     }
 
     if (coin.x + coin.w < 0) coins.splice(i, 1);
-  });
+  }
 
   // Física del jugador
   player.vy += player.gravity;
