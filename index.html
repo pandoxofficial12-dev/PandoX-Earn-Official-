@@ -8,30 +8,67 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --gold: #ffd700; --blue: #00f0ff; }
+    :root { --gold: #ffd700; --blue: #00f0ff; --dark: #000022; }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #000022, #000055);
+      background: linear-gradient(135deg, var(--dark), #000055);
       color: #f0faff;
       min-height: 100vh;
       padding: 15px;
     }
     #splash {
-      position: fixed; inset: 0; background: #000022;
+      position: fixed; inset: 0; background: var(--dark);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 9999; animation: fadeOut 1.2s forwards;
     }
     @keyframes fadeOut { 0% {opacity:1} 100% {opacity:0; visibility:hidden} }
     .logo { width: 170px; height: 170px; border-radius: 50%; border: 8px double var(--gold); }
-    h1 { font-family: 'Montserrat', sans-serif; font-size: 3em; background: linear-gradient(90deg, var(--gold), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; margin: 20px 0; }
-    .section { background: rgba(5,5,40,0.95); border-radius: 20px; padding: 25px; margin: 20px 0; border: 1px solid rgba(255,215,0,0.4); }
+    h1 { 
+      font-family: 'Montserrat', sans-serif; 
+      font-size: 3.2em; 
+      background: linear-gradient(90deg, var(--gold), var(--blue)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      text-align: center; 
+      margin: 20px 0 25px; 
+    }
+    .section { 
+      background: rgba(5,5,40,0.95); 
+      border-radius: 20px; 
+      padding: 25px; 
+      margin: 20px 0; 
+      border: 1px solid rgba(255,215,0,0.4); 
+    }
     .earn-btn {
       background: linear-gradient(135deg, var(--blue), var(--gold));
-      color: #000; border: none; padding: 16px; border-radius: 50px;
-      font-size: 1.3em; font-weight: bold; width: 100%; margin: 10px 0; display: block;
+      color: #000; 
+      border: none; 
+      padding: 16px; 
+      border-radius: 50px;
+      font-size: 1.3em; 
+      font-weight: bold; 
+      width: 100%; 
+      margin: 10px 0; 
+      display: block;
     }
-    #gameCanvas { width: 100%; height: 300px; background: #000022; border-radius: 16px; margin-top: 15px; border: 3px solid var(--gold); display: block; }
+    #gameCanvas { 
+      width: 100%; 
+      height: 320px; 
+      background: #000022; 
+      border-radius: 16px; 
+      margin-top: 15px; 
+      border: 3px solid var(--gold); 
+      display: block;
+    }
+    #gameScore { 
+      font-size: 1.9em; 
+      font-weight: bold; 
+      color: var(--gold); 
+      text-shadow: 0 0 12px var(--gold); 
+      text-align: center; 
+      margin: 12px 0;
+    }
   </style>
 </head>
 <body>
@@ -69,12 +106,12 @@
       <button id="playPaid" class="earn-btn" style="flex:1;max-width:160px;">Competir (0.5 WLD)</button>
     </div>
     <canvas id="gameCanvas"></canvas>
-    <p id="gameScore" style="text-align:center;font-size:1.5em;margin:12px 0;color:#ffd700;">Score: 0</p>
+    <p id="gameScore">Score: 0</p>
     <p id="gameMessage" style="text-align:center;color:#ccc;">Toca la pantalla para saltar</p>
   </div>
 
 <script>
-// MiniKit + Supabase (sin cambios)
+// MiniKit + Supabase
 let walletAddress = '';
 document.getElementById('subscribeBtn').addEventListener('click', async () => {
   if (typeof MiniKit === 'undefined') return alert('Abre en World App');
@@ -90,19 +127,32 @@ document.getElementById('subscribeBtn').addEventListener('click', async () => {
 });
 document.getElementById('claimBtn').addEventListener('click', () => alert('¡Reclamado +100 PDX!'));
 
-// ==================== PANDA RUNNER - CREADO DESDE CERO ====================
+// ==================== PANDA RUNNER - Versión final mejorada ====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth || 360;
-  canvas.height = 300;
+  canvas.height = 320;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-let player = { x: 70, y: 190, w: 55, h: 55, vy: 0, gravity: 0.75, jump: -17 };
+let player = { 
+  x: 65, 
+  y: 190, 
+  w: 72, 
+  h: 72, 
+  vy: 0, 
+  gravity: 0.78, 
+  jumpPower: -18.5,
+  onGround: true 
+};
+
 let obstacles = [], coins = [], score = 0, running = false;
+
+const pandaImg = new Image();
+pandaImg.src = 'https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png';
 
 function startGame(paid) {
   if (paid && !walletAddress) return alert('Conecta tu wallet primero');
@@ -110,11 +160,12 @@ function startGame(paid) {
   score = 0;
   player.y = 190;
   player.vy = 0;
+  player.onGround = true;
   obstacles = [];
   coins = [];
   document.getElementById('gameScore').textContent = 'Score: 0';
-  document.getElementById('gameMessage').textContent = '¡Saltando!';
-  setTimeout(animateGame, 80); // Delay necesario para WebView Android
+  document.getElementById('gameMessage').textContent = '¡Salta!';
+  setTimeout(animateGame, 60);
 }
 
 function animateGame() {
@@ -122,67 +173,77 @@ function animateGame() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Panda (rectángulo verde + emoji)
-  ctx.fillStyle = '#00ff88';
-  ctx.fillRect(player.x, player.y, player.w, player.h);
-  ctx.font = '35px Arial';
-  ctx.fillText('🐼', player.x + 8, player.y + 45);
+  // Panda con tu logo real
+  if (pandaImg.complete) {
+    ctx.drawImage(pandaImg, player.x, player.y, player.w, player.h);
+  } else {
+    ctx.fillStyle = '#00ff88';
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+  }
 
   // Suelo
   ctx.fillStyle = '#222255';
-  ctx.fillRect(0, 245, canvas.width, 55);
+  ctx.fillRect(0, 245, canvas.width, 75);
 
-  // Obstáculos (rojos)
-  if (Math.random() < 0.04) obstacles.push({x: canvas.width, y: 195, w: 35, h: 50});
+  // Obstáculos
+  if (Math.random() < 0.035) obstacles.push({x: canvas.width, y: 190, w: 38, h: 55});
   for (let i = obstacles.length - 1; i >= 0; i--) {
     let o = obstacles[i];
-    o.x -= 7.5;
+    o.x -= 7.2;
     ctx.fillStyle = '#ff4444';
     ctx.fillRect(o.x, o.y, o.w, o.h);
 
     if (o.x < player.x + player.w && o.x + o.w > player.x && 
         o.y < player.y + player.h && o.y + o.h > player.y) {
       running = false;
-      alert(`¡Game Over! Score: ${score}`);
+      alert(`¡Game Over!\nScore final: ${score}\n¡Inténtalo de nuevo!`);
       return;
     }
     if (o.x < -50) obstacles.splice(i, 1);
   }
 
-  // Monedas (doradas)
-  if (Math.random() < 0.05) coins.push({x: canvas.width, y: 90 + Math.random() * 110});
+  // Monedas
+  if (Math.random() < 0.045) coins.push({x: canvas.width, y: 85 + Math.random()*130});
   for (let i = coins.length - 1; i >= 0; i--) {
     let c = coins[i];
-    c.x -= 7.5;
-    ctx.fillStyle = '#ffdd00';
+    c.x -= 7.2;
+    ctx.fillStyle = '#ffd700';
     ctx.beginPath();
-    ctx.arc(c.x, c.y, 14, 0, Math.PI * 2);
+    ctx.arc(c.x, c.y, 15, 0, Math.PI*2);
     ctx.fill();
 
-    if (Math.hypot(c.x - (player.x + 27), c.y - (player.y + 27)) < 35) {
+    if (Math.hypot(c.x - (player.x + 36), c.y - (player.y + 36)) < 38) {
       score += 50;
       coins.splice(i, 1);
     }
     if (c.x < -30) coins.splice(i, 1);
   }
 
-  // Física del salto
+  // Física
   player.vy += player.gravity;
   player.y += player.vy;
-  if (player.y > 190) {
+
+  if (player.y >= 190) {
     player.y = 190;
     player.vy = 0;
+    player.onGround = true;
+  } else {
+    player.onGround = false;
   }
 
   score += 1;
-  document.getElementById('gameScore').textContent = `Score: ${score}`;
+  document.getElementById('gameScore').innerHTML = `Score: <span style="color:#ffd700;">${score}</span>`;
 
   requestAnimationFrame(animateGame);
 }
 
+// Salto solo cuando está en el suelo (sin multi-jump)
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  if (running) player.vy = -17;
+  if (running && player.onGround) {
+    player.vy = player.jumpPower;
+    player.onGround = false;
+  }
 }, { passive: false });
 
 document.getElementById('playPractice').addEventListener('click', () => startGame(false));
