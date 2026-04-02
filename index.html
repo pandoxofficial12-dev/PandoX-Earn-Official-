@@ -3,104 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PandoX - Earn PDX</title>
+  <title>PandoX</title>
   <script src="https://cdn.jsdelivr.net/npm/@worldcoin/minikit-js@latest/dist/index.global.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
+      --neon-blue: #00f0ff;
+      --deep-blue: #001133;
       --gold: #ffd700;
-      --neon: #00f0ff;
-      --dark: #0a0a2e;
-      --card: rgba(15, 15, 55, 0.97);
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, var(--dark) 0%, #1a1a4d 100%);
-      color: #f0faff;
+      background: linear-gradient(135deg, #001133 0%, #000022 100%);
+      color: #e0f8ff;
       min-height: 100vh;
       padding: 16px;
     }
 
     #splash {
-      position: fixed; inset: 0; background: var(--dark);
+      position: fixed; inset: 0; background: #001133;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 9999; animation: fadeOut 1.3s forwards;
     }
     @keyframes fadeOut { 0% {opacity:1} 100% {opacity:0; visibility:hidden} }
 
     .main-logo {
-      width: 205px;
-      height: 205px;
+      width: 210px; height: 210px;
       border-radius: 50%;
-      border: 12px double var(--gold);
-      box-shadow: 0 0 50px rgba(255,215,0,0.7);
+      border: 14px double var(--neon-blue);
+      box-shadow: 0 0 60px rgba(0,240,255,0.8);
     }
 
     h1 {
       font-family: 'Montserrat', sans-serif;
-      font-size: 3.6em;
-      background: linear-gradient(90deg, var(--gold), var(--neon));
+      font-size: 3.8em;
+      background: linear-gradient(90deg, var(--neon-blue), #ffffff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-align: center;
-      margin: 15px 0 10px;
-      text-shadow: 0 0 30px rgba(255,215,0,0.6);
+      margin: 20px 0 12px;
+      text-shadow: 0 0 40px var(--neon-blue);
     }
 
     .tagline {
       text-align: center;
-      font-size: 1.5em;
-      color: #b0e0ff;
-      margin-bottom: 35px;
-      opacity: 0.95;
+      font-size: 1.55em;
+      color: #a0f0ff;
+      margin-bottom: 40px;
     }
 
     .section {
-      background: var(--card);
+      background: rgba(0, 20, 60, 0.95);
       border-radius: 28px;
-      padding: 32px 26px;
+      padding: 32px 24px;
       margin: 24px 0;
-      border: 1px solid rgba(255,215,0,0.35);
-      box-shadow: 0 12px 45px rgba(0,0,0,0.55);
+      border: 2px solid var(--neon-blue);
+      box-shadow: 0 15px 50px rgba(0,240,255,0.3);
     }
 
     .earn-btn {
-      background: linear-gradient(135deg, var(--neon), var(--gold));
+      background: linear-gradient(135deg, var(--neon-blue), #00aaff);
       color: #000;
       border: none;
-      padding: 19px 45px;
+      padding: 20px 40px;
       border-radius: 60px;
-      font-size: 1.42em;
+      font-size: 1.45em;
       font-weight: 700;
       width: 100%;
-      max-width: 360px;
       margin: 14px auto;
       display: block;
-      box-shadow: 0 8px 32px rgba(0,240,255,0.4);
-      transition: all 0.2s;
+      box-shadow: 0 10px 35px rgba(0,240,255,0.5);
     }
-    .earn-btn:active { transform: scale(0.96); }
 
     #gameCanvas {
       width: 100%;
-      height: 335px;
-      background: #0a0a2e;
+      height: 360px;
+      background: linear-gradient(#001133, #112244);
       border-radius: 24px;
-      margin-top: 22px;
-      border: 4px solid var(--gold);
-      box-shadow: 0 0 40px rgba(255,215,0,0.6);
+      margin-top: 20px;
+      border: 5px solid var(--neon-blue);
+      box-shadow: 0 0 50px rgba(0,240,255,0.6);
     }
 
     #gameScore {
-      font-size: 2.2em;
+      font-size: 2.3em;
       font-weight: bold;
-      color: var(--gold);
+      color: var(--neon-blue);
       text-align: center;
       margin: 18px 0 10px;
-      text-shadow: 0 0 20px var(--gold);
+      text-shadow: 0 0 25px var(--neon-blue);
     }
   </style>
 </head>
@@ -109,40 +103,40 @@
   <div id="splash">
     <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX" class="main-logo">
     <h1>PandoX</h1>
-    <p style="color:#ffd700">Cargando experiencia premium...</p>
+    <p style="color:#00f0ff;font-size:1.3em;">Futuro en tus manos</p>
   </div>
 
-  <div style="text-align:center;margin:20px 0 15px;">
-    <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX" class="main-logo" style="width:215px;height:215px;">
+  <div style="text-align:center;margin:25px 0 10px;">
+    <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX" class="main-logo" style="width:220px;height:220px;">
   </div>
 
   <h1>PandoX</h1>
-  <p class="tagline">Reclama cada 6h • Compite • Gana PDX</p>
+  <p class="tagline">Reclama • Compite • Gana en World App</p>
 
   <div class="section">
-    <h2 style="text-align:center;color:var(--gold);margin-bottom:25px;">Gana PDX</h2>
+    <h2 style="text-align:center;color:var(--neon-blue);margin-bottom:25px;">Gana PDX</h2>
     <button id="subscribeBtn" class="earn-btn">Conectar Wallet</button>
     <button id="claimBtn" class="earn-btn" disabled>Reclamar PDX</button>
   </div>
 
-  <div class="section" style="border:2px solid var(--gold);background:rgba(255,215,0,0.08);text-align:center;">
-    <p style="font-size:16px;line-height:1.7;color:var(--gold);">
-      🎉 <strong>Todos los domingos 8:00 PM (UTC-5)</strong><br><br>
-      Ranking Puntos PDX: 1° 80.000 • 2° 40.000 • 3° 25.000 PDX<br><br>
-      Ranking Panda Runner: 1° 400.000 • 2° 200.000 • 3° 80.000 PDX<br><br>
-      <strong style="color:#ffdd88;">Mínimo 50 entradas pagadas para activar premios</strong>
+  <div class="section" style="border:2px solid var(--neon-blue);text-align:center;">
+    <p style="font-size:16px;line-height:1.7;color:var(--neon-blue);">
+      🎉 Domingos 8:00 PM (UTC-5)<br><br>
+      Ranking Puntos PDX: 1° 80.000 • 2° 40.000 • 3° 25.000<br>
+      Ranking Panda Runner: 1° 400.000 • 2° 200.000 • 3° 80.000 PDX<br>
+      <strong>Mínimo 50 entradas pagadas</strong>
     </p>
   </div>
 
   <div class="section">
-    <h2 style="text-align:center;color:var(--gold);margin-bottom:22px;">🐼 Panda Runner</h2>
+    <h2 style="text-align:center;color:var(--neon-blue);margin-bottom:22px;">🐼 Panda Runner</h2>
     <div style="display:flex;justify-content:center;gap:16px;margin:22px 0;">
-      <button id="playPractice" class="earn-btn" style="flex:1;max-width:172px;">Practicar<br><small>(gratis)</small></button>
-      <button id="playPaid" class="earn-btn" style="flex:1;max-width:172px;">Competir<br><small>(0.5 WLD)</small></button>
+      <button id="playPractice" class="earn-btn" style="flex:1;max-width:172px;">Practicar (gratis)</button>
+      <button id="playPaid" class="earn-btn" style="flex:1;max-width:172px;">Competir (0.5 WLD)</button>
     </div>
     <canvas id="gameCanvas"></canvas>
     <p id="gameScore">Score: 0</p>
-    <p id="gameMessage" style="text-align:center;color:#bbb;margin-top:8px;">Toca la pantalla para saltar</p>
+    <p id="gameMessage" style="text-align:center;color:#88ddff;margin-top:8px;">Toca para saltar</p>
   </div>
 
 <script>
@@ -160,21 +154,20 @@ document.getElementById('subscribeBtn').addEventListener('click', async () => {
     }
   } catch(e) { alert('Error conectando wallet'); }
 });
-
 document.getElementById('claimBtn').addEventListener('click', () => alert('¡Reclamado +100 PDX!'));
 
-// PANDA RUNNER - Mejorado y sin multi-jump
+// PANDA RUNNER - Más espacio y visibilidad (estilo dinosaurio Chrome)
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth || 360;
-  canvas.height = 335;
+  canvas.height = 360;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-let player = { x: 65, y: 190, w: 72, h: 72, vy: 0, gravity: 0.78, jumpPower: -18.5, onGround: true };
+let player = { x: 60, y: 210, w: 80, h: 80, vy: 0, gravity: 0.82, jumpPower: -19.5, onGround: true };
 let obstacles = [], coins = [], score = 0, running = false;
 
 const pandaImg = new Image();
@@ -184,7 +177,7 @@ function startGame(paid) {
   if (paid && !walletAddress) return alert('Conecta tu wallet primero');
   running = true;
   score = 0;
-  player.y = 190;
+  player.y = 210;
   player.vy = 0;
   player.onGround = true;
   obstacles = [];
@@ -198,49 +191,53 @@ function animateGame() {
   if (!running) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // Panda
   if (pandaImg.complete) {
     ctx.drawImage(pandaImg, player.x, player.y, player.w, player.h);
   } else {
-    ctx.fillStyle = '#00ff88';
+    ctx.fillStyle = '#00f0ff';
     ctx.fillRect(player.x, player.y, player.w, player.h);
   }
 
-  ctx.fillStyle = '#1a1a40';
-  ctx.fillRect(0, 245, canvas.width, 90);
+  // Suelo
+  ctx.fillStyle = '#112244';
+  ctx.fillRect(0, 270, canvas.width, 90);
 
-  if (Math.random() < 0.035) obstacles.push({x: canvas.width, y: 190, w: 38, h: 55});
+  // Obstáculos
+  if (Math.random() < 0.03) obstacles.push({x: canvas.width, y: 210, w: 45, h: 60});
   for (let i = obstacles.length - 1; i >= 0; i--) {
     let o = obstacles[i];
-    o.x -= 7.2;
-    ctx.fillStyle = '#ff4444';
+    o.x -= 6.8;
+    ctx.fillStyle = '#ff3366';
     ctx.fillRect(o.x, o.y, o.w, o.h);
     if (o.x < player.x + player.w && o.x + o.w > player.x && o.y < player.y + player.h && o.y + o.h > player.y) {
       running = false;
-      alert(`¡Game Over!\nScore final: ${score}\n¡Inténtalo de nuevo!`);
+      alert(`¡Game Over!\nScore: ${score}\n¡Inténtalo de nuevo!`);
       return;
     }
-    if (o.x < -50) obstacles.splice(i, 1);
+    if (o.x < -60) obstacles.splice(i, 1);
   }
 
-  if (Math.random() < 0.045) coins.push({x: canvas.width, y: 85 + Math.random()*135});
+  // Monedas
+  if (Math.random() < 0.04) coins.push({x: canvas.width, y: 100 + Math.random()*140});
   for (let i = coins.length - 1; i >= 0; i--) {
     let c = coins[i];
-    c.x -= 7.2;
+    c.x -= 6.8;
     ctx.fillStyle = '#ffd700';
     ctx.beginPath();
-    ctx.arc(c.x, c.y, 15, 0, Math.PI*2);
+    ctx.arc(c.x, c.y, 16, 0, Math.PI*2);
     ctx.fill();
-    if (Math.hypot(c.x - (player.x + 36), c.y - (player.y + 36)) < 38) {
+    if (Math.hypot(c.x - (player.x + 40), c.y - (player.y + 40)) < 42) {
       score += 50;
       coins.splice(i, 1);
     }
-    if (c.x < -30) coins.splice(i, 1);
+    if (c.x < -40) coins.splice(i, 1);
   }
 
   player.vy += player.gravity;
   player.y += player.vy;
-  if (player.y >= 190) {
-    player.y = 190;
+  if (player.y >= 210) {
+    player.y = 210;
     player.vy = 0;
     player.onGround = true;
   } else {
@@ -248,7 +245,7 @@ function animateGame() {
   }
 
   score += 1;
-  document.getElementById('gameScore').innerHTML = `Score: <span style="color:#ffd700">${score}</span>`;
+  document.getElementById('gameScore').innerHTML = `Score: <span style="color:#00f0ff">${score}</span>`;
 
   requestAnimationFrame(animateGame);
 }
