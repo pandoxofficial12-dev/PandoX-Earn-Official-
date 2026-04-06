@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PandoX</title>
   <script src="https://cdn.jsdelivr.net/npm/@worldcoin/minikit-js@latest/dist/index.global.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --neon-blue: #00f0ff; --deep-space: #00081f; }
+    :root {
+      --neon-blue: #00f0ff;
+      --dark-space: #00081f;
+      --accent: #00bbff;
+    }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Roboto', sans-serif;
       background: linear-gradient(135deg, #00081f 0%, #001122 100%);
       color: #e0f8ff;
       min-height: 100vh;
-      padding: 15px;
+      padding: 20px;
       position: relative;
       overflow-x: hidden;
     }
@@ -23,49 +26,45 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(0,240,255,0.12) 0%, transparent 70%),
-                  radial-gradient(circle at 70% 80%, rgba(0,240,255,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle at 30% 20%, rgba(0,240,255,0.18) 0%, transparent 65%),
+                  radial-gradient(circle at 70% 80%, rgba(0,240,255,0.12) 0%, transparent 65%);
       z-index: -1;
-      opacity: 0.85;
     }
-    .stars {
-      position: fixed;
-      inset: 0;
-      background: transparent;
-      z-index: -1;
-      pointer-events: none;
-    }
-    .hero {
+    .header {
       text-align: center;
-      margin: 40px 0 60px;
+      margin: 40px 0 50px;
     }
-    .hero-logo {
-      width: 260px;
-      height: 260px;
+    .logo {
+      width: 240px;
+      height: 240px;
       border-radius: 50%;
-      border: 18px double var(--neon-blue);
-      box-shadow: 0 0 100px rgba(0,240,255,0.9);
+      border: 14px double var(--neon-blue);
+      box-shadow: 0 0 90px rgba(0,240,255,0.95);
+      margin-bottom: 25px;
     }
     h1 {
       font-family: 'Montserrat', sans-serif;
-      font-size: 4.2em;
-      background: linear-gradient(90deg, var(--neon-blue), #fff);
+      font-size: 3.6em;
+      background: linear-gradient(90deg, var(--neon-blue), #ffffff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin: 20px 0 10px;
-      text-shadow: 0 0 60px var(--neon-blue);
+      margin-bottom: 12px;
     }
-    .tagline { font-size: 1.75em; color: #a0f0ff; margin-bottom: 50px; }
+    .tagline {
+      font-size: 1.65em;
+      color: #a0f0ff;
+      margin-bottom: 60px;
+    }
     .card {
-      background: rgba(5, 25, 60, 0.95);
-      border-radius: 30px;
-      padding: 40px 25px;
-      margin: 35px 0;
+      background: rgba(5, 25, 60, 0.96);
       border: 2px solid var(--neon-blue);
-      box-shadow: 0 20px 70px rgba(0,240,255,0.25);
+      border-radius: 28px;
+      padding: 38px 28px;
+      margin: 32px 0;
+      box-shadow: 0 25px 70px rgba(0,240,255,0.3);
     }
     .btn {
-      background: linear-gradient(135deg, var(--neon-blue), #00aaff);
+      background: linear-gradient(135deg, var(--neon-blue), var(--accent));
       color: #000;
       border: none;
       padding: 22px;
@@ -73,45 +72,57 @@
       font-size: 1.55em;
       font-weight: 700;
       width: 100%;
-      margin: 15px 0;
-      box-shadow: 0 12px 50px rgba(0,240,255,0.45);
+      margin: 16px 0;
+      box-shadow: 0 15px 50px rgba(0,240,255,0.5);
+      transition: transform 0.2s;
     }
-    #gameCanvas {
-      width: 100%;
-      height: 390px;
+    .btn:active { transform: scale(0.95); }
+    .game-container {
       background: #001122;
-      border-radius: 25px;
-      margin-top: 30px;
-      border: 5px solid var(--neon-blue);
-      box-shadow: 0 0 65px rgba(0,240,255,0.7);
+      border: 6px solid var(--neon-blue);
+      border-radius: 24px;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 25px;
     }
-    #gameScore {
-      font-size: 2.6em;
+    .panda {
+      position: absolute;
+      bottom: 90px;
+      left: 70px;
+      font-size: 110px;
+      transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2;
+    }
+    .score {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 2.4em;
+      font-weight: bold;
       color: var(--neon-blue);
-      text-align: center;
-      margin: 30px 0 12px;
-      text-shadow: 0 0 30px var(--neon-blue);
+      text-shadow: 0 0 20px var(--neon-blue);
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <div class="stars"></div>
 
-  <div class="hero">
-    <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX" class="hero-logo">
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png" alt="PandoX" class="logo">
     <h1>PandoX</h1>
     <p class="tagline">Reclama • Compite • Gana PDX</p>
   </div>
 
   <div class="card">
-    <h2 style="text-align:center;color:var(--neon-blue);margin-bottom:30px;">Gana PDX</h2>
-    <button id="subscribeBtn" class="btn">Conectar Wallet</button>
+    <h2 style="text-align:center;color:var(--neon-blue);margin-bottom:30px;">Wallet</h2>
+    <button id="connectBtn" class="btn">Conectar Wallet</button>
     <button id="claimBtn" class="btn" disabled>Reclamar PDX</button>
   </div>
 
   <div class="card">
-    <p style="text-align:center;font-size:17px;line-height:1.8;color:var(--neon-blue);">
-      🎉 Todos los domingos 8:00 PM (UTC-5)<br><br>
+    <p style="text-align:center;font-size:17px;line-height:1.9;color:var(--neon-blue);">
+      🏆 Todos los domingos 8:00 PM (UTC-5)<br><br>
       Ranking Puntos PDX: 1° 80.000 • 2° 40.000 • 3° 25.000 PDX<br>
       Ranking Panda Runner: 1° 400.000 • 2° 200.000 • 3° 80.000 PDX<br><br>
       <strong>Mínimo 50 entradas pagadas</strong>
@@ -120,118 +131,73 @@
 
   <div class="card">
     <h2 style="text-align:center;color:var(--neon-blue);margin-bottom:30px;">🐼 Panda Runner</h2>
-    <div style="display:flex;gap:20px;justify-content:center;margin:30px 0;">
-      <button id="playPractice" class="btn" style="flex:1;max-width:180px;">Practicar (gratis)</button>
-      <button id="playPaid" class="btn" style="flex:1;max-width:180px;">Competir (0.5 WLD)</button>
+    <div style="display:flex;gap:18px;justify-content:center;margin-bottom:25px;">
+      <button id="practiceBtn" class="btn" style="flex:1;">Practicar Gratis</button>
+      <button id="paidBtn" class="btn" style="flex:1;">Competir (0.5 WLD)</button>
     </div>
-    <canvas id="gameCanvas"></canvas>
-    <p id="gameScore">Score: 0</p>
-    <p id="gameMessage" style="text-align:center;color:#88eeff;margin-top:15px;">Toca la pantalla para saltar</p>
+
+    <div class="game-container" id="gameContainer">
+      <div class="score" id="scoreDisplay">Score: 0</div>
+      <div id="panda" class="panda">🐼</div>
+      <div id="gameInfo" style="position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#88eeff;font-size:1.2em;">
+        Toca la pantalla para saltar
+      </div>
+    </div>
   </div>
 
 <script>
-// Wallet
+// Wallet connection
 let walletAddress = '';
-document.getElementById('subscribeBtn').addEventListener('click', async () => {
-  if (typeof MiniKit === 'undefined') return alert('Abre en World App');
+document.getElementById('connectBtn').addEventListener('click', async () => {
+  if (typeof MiniKit === 'undefined') return alert('Abre la app en World App');
   try {
     const { finalPayload } = await MiniKit.commandsAsync.walletAuth({ nonce: Math.random().toString(36) });
     if (finalPayload.status === 'success') {
       walletAddress = MiniKit.walletAddress;
-      document.getElementById('subscribeBtn').style.display = 'none';
+      document.getElementById('connectBtn').style.display = 'none';
       document.getElementById('claimBtn').disabled = false;
-      alert('✅ Wallet conectada');
+      alert('✅ Wallet conectada correctamente');
     }
-  } catch(e) { alert('Error en wallet'); }
+  } catch(e) { alert('Error al conectar wallet'); }
 });
-document.getElementById('claimBtn').addEventListener('click', () => alert('¡Reclamado!'));
+document.getElementById('claimBtn').addEventListener('click', () => alert('¡PDX reclamado con éxito!'));
 
-// Game
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-function resizeCanvas() {
-  canvas.width = canvas.offsetWidth || 360;
-  canvas.height = 390;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+// Simple & Smooth Panda Runner
+let score = 0;
+let isJumping = false;
+const panda = document.getElementById('panda');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const gameContainer = document.getElementById('gameContainer');
 
-let player = { x: 70, y: 235, w: 72, h: 72, vy: 0, gravity: 0.82, jumpPower: -19.5, onGround: true };
-let obstacles = [], coins = [], score = 0, running = false;
-const pandaImg = new Image();
-pandaImg.src = 'https://raw.githubusercontent.com/pandoxofficial12-dev/PandoX-Earn-Official-/main/logo-pandox.png';
-
-function startGame(paid) {
-  if (paid && !walletAddress) return alert('Conecta tu wallet primero');
-  running = true;
-  score = 0;
-  player.y = 235; player.vy = 0; player.onGround = true;
-  obstacles = []; coins = [];
-  document.getElementById('gameScore').textContent = 'Score: 0';
-  setTimeout(animateGame, 60);
+function jump() {
+  if (isJumping) return;
+  isJumping = true;
+  panda.style.bottom = '210px';
+  setTimeout(() => {
+    panda.style.bottom = '90px';
+    isJumping = false;
+  }, 420);
 }
 
-function animateGame() {
-  if (!running) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (pandaImg.complete) ctx.drawImage(pandaImg, player.x, player.y, player.w, player.h);
-  else {
-    ctx.fillStyle = '#00f0ff';
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-  }
-
-  ctx.fillStyle = '#112244';
-  ctx.fillRect(0, 310, canvas.width, 80);
-
-  // Obstacles and coins logic (same as before, with good spacing)
-  if (Math.random() < 0.025) obstacles.push({x: canvas.width + 20, y: 235, w: 42, h: 62});
-  for (let i = obstacles.length-1; i >= 0; i--) {
-    let o = obstacles[i];
-    o.x -= 6.8;
-    ctx.fillStyle = '#ff3366';
-    ctx.fillRect(o.x, o.y, o.w, o.h);
-    if (o.x < player.x + player.w && o.x + o.w > player.x && o.y < player.y + player.h && o.y + o.h > player.y) {
-      running = false;
-      alert(`Game Over! Score: ${score}`);
-      return;
-    }
-    if (o.x < -50) obstacles.splice(i,1);
-  }
-
-  if (Math.random() < 0.035) coins.push({x: canvas.width, y: 120 + Math.random()*170});
-  for (let i = coins.length-1; i >= 0; i--) {
-    let c = coins[i];
-    c.x -= 6.8;
-    ctx.fillStyle = '#ffd700';
-    ctx.beginPath(); ctx.arc(c.x, c.y, 15, 0, Math.PI*2); ctx.fill();
-    if (Math.hypot(c.x - (player.x+36), c.y - (player.y+36)) < 42) {
-      score += 50; coins.splice(i,1);
-    }
-    if (c.x < -30) coins.splice(i,1);
-  }
-
-  player.vy += player.gravity;
-  player.y += player.vy;
-  if (player.y >= 235) { player.y = 235; player.vy = 0; player.onGround = true; }
-  else player.onGround = false;
-
-  score += 1;
-  document.getElementById('gameScore').innerHTML = `Score: <span style="color:#00f0ff">${score}</span>`;
-
-  requestAnimationFrame(animateGame);
-}
-
-canvas.addEventListener('touchstart', (e) => {
+gameContainer.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  if (running && player.onGround) {
-    player.vy = player.jumpPower;
-    player.onGround = false;
-  }
-}, { passive: false });
+  jump();
+  score += 12;
+  scoreDisplay.textContent = `Score: ${score}`;
+});
 
-document.getElementById('playPractice').addEventListener('click', () => startGame(false));
-document.getElementById('playPaid').addEventListener('click', () => startGame(true));
+document.getElementById('practiceBtn').addEventListener('click', () => {
+  score = 0;
+  scoreDisplay.textContent = 'Score: 0';
+  alert('🎮 Modo Práctica activado\nToca la pantalla para saltar');
+});
+
+document.getElementById('paidBtn').addEventListener('click', () => {
+  if (!walletAddress) return alert('Conecta tu wallet primero');
+  score = 0;
+  scoreDisplay.textContent = 'Score: 0';
+  alert('🏆 Modo Competir activado (0.5 WLD)');
+});
 </script>
 </body>
 </html>
