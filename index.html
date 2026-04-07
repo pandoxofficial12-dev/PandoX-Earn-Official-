@@ -52,7 +52,7 @@
     }
     #gameCanvas {
       width: 100%;
-      height: 430px; /* Más ancho y alto para mejor visibilidad */
+      height: 420px; /* Más ancho y con mejor proporción */
       background: linear-gradient(#001122, #0a1f3a);
       border: 7px solid var(--neon-blue);
       border-radius: 28px;
@@ -110,18 +110,18 @@ document.getElementById('connectBtn').addEventListener('click', async () => {
 });
 document.getElementById('claimBtn').addEventListener('click', () => alert('¡PDX reclamado!'));
 
-// Juego mejorado - más ancho y con espacio
+// Juego optimizado - más espacio y panda pequeño
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth || 400;
-  canvas.height = 430;
+  canvas.height = 420;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-let player = { x: 80, y: 260, w: 65, h: 65, vy: 0, gravity: 0.75, jumpPower: -19.2, onGround: true };
+let player = { x: 75, y: 260, w: 62, h: 62, vy: 0, gravity: 0.78, jumpPower: -19.2, onGround: true };
 let obstacles = [], coins = [], score = 0, running = false;
 
 const pandaImg = new Image();
@@ -144,14 +144,16 @@ function animateGame() {
   // Fondo espacio
   ctx.fillStyle = '#001122';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  for (let i = 0; i < 40; i++) {
-    const x = (i * 29) % canvas.width;
-    const y = (i * 17) % 300;
+
+  // Estrellas
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  for (let i = 0; i < 45; i++) {
+    const x = (i * 27) % canvas.width;
+    const y = (i * 18) % 320;
     ctx.fillRect(x, y, 2, 2);
   }
 
-  // Panda más pequeño
+  // Panda más pequeño y bien ubicado
   if (pandaImg.complete) ctx.drawImage(pandaImg, player.x, player.y, player.w, player.h);
   else {
     ctx.fillStyle = '#00f0ff';
@@ -160,13 +162,13 @@ function animateGame() {
 
   // Suelo
   ctx.fillStyle = '#112244';
-  ctx.fillRect(0, 330, canvas.width, 100);
+  ctx.fillRect(0, 330, canvas.width, 90);
 
-  // Obstáculos - aparecen más lejos
-  if (Math.random() < 0.021) obstacles.push({x: canvas.width + 80, y: 260, w: 48, h: 70});
+  // Obstáculos - aparecen más lejos para dar tiempo
+  if (Math.random() < 0.021) obstacles.push({x: canvas.width + 90, y: 260, w: 46, h: 70});
   for (let i = obstacles.length-1; i >= 0; i--) {
     let o = obstacles[i];
-    o.x -= 6.8;
+    o.x -= 6.9;
     ctx.fillStyle = '#ff3366';
     ctx.fillRect(o.x, o.y, o.w, o.h);
     if (o.x < player.x + player.w && o.x + o.w > player.x && o.y < player.y + player.h && o.y + o.h > player.y) {
@@ -178,13 +180,13 @@ function animateGame() {
   }
 
   // Monedas
-  if (Math.random() < 0.038) coins.push({x: canvas.width + 50, y: 140 + Math.random()*150});
+  if (Math.random() < 0.037) coins.push({x: canvas.width + 60, y: 130 + Math.random()*160});
   for (let i = coins.length-1; i >= 0; i--) {
     let c = coins[i];
-    c.x -= 6.8;
+    c.x -= 6.9;
     ctx.fillStyle = '#ffd700';
-    ctx.beginPath(); ctx.arc(c.x, c.y, 17, 0, Math.PI*2); ctx.fill();
-    if (Math.hypot(c.x - (player.x + 32), c.y - (player.y + 32)) < 48) {
+    ctx.beginPath(); ctx.arc(c.x, c.y, 16, 0, Math.PI*2); ctx.fill();
+    if (Math.hypot(c.x - (player.x + 31), c.y - (player.y + 31)) < 45) {
       score += 50;
       coins.splice(i,1);
     }
